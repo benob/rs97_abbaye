@@ -72,12 +72,16 @@ void history(SDL_Window *screen,uint8_t *state,uint8_t *grapset,uint8_t *fullscr
 		/* Check keyboard */
 		if ( SDL_PollEvent(&keyp) ) {
 			if (keyp.type == SDL_KEYDOWN) { /* Key pressed */
-				if (keyp.key.keysym.sym == SDLK_c) { /* Change graphic set */
+				if (keyp.key.keysym.sym == SDLK_c || keyp.key.keysym.sym == SDLK_TAB) { /* Change graphic set */
 					if (*grapset == 0)
 						*grapset = 1;
 					else
 						*grapset = 0;
 				}
+#ifdef USE_SDL2_COMPAT
+			  if (keyp.key.keysym.sym == SDLK_BACKSPACE) // R
+          SDL_RendererSetScaleMode(renderer, 1 - renderer->scale_mode);
+#endif
 				if (keyp.key.keysym.sym == SDLK_f) { /* Switch fullscreen/windowed */
 					if (*fullscreen == 0) {
 						SDL_SetWindowFullscreen(screen,SDL_WINDOW_FULLSCREEN_DESKTOP);
@@ -88,11 +92,11 @@ void history(SDL_Window *screen,uint8_t *state,uint8_t *grapset,uint8_t *fullscr
 						*fullscreen = 0;
 					}
 				}
-				if (keyp.key.keysym.sym == SDLK_SPACE) { /* Start game */
+				if (keyp.key.keysym.sym == SDLK_SPACE || keyp.key.keysym.sym == SDLK_LCTRL) { /* Start game */
 					*state = 2;
 					exit = 1;
 				}
-				if (keyp.key.keysym.sym == SDLK_ESCAPE) { /* Exit game */
+				if (keyp.key.keysym.sym == SDLK_ESCAPE || keyp.key.keysym.sym == SDLK_RETURN) { /* Exit game */
       					exit = 1;
 					*state = 6;
 				}

@@ -25,7 +25,7 @@ int main () {
 		screen = SDL_CreateWindow(NULL, 0, 0, 0, 0, SDL_WINDOW_FULLSCREEN_DESKTOP);
 	else	
 		screen = SDL_CreateWindow("Abbaye des Morts v2.0.1",
-			SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,768,576,0);
+			SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,320,240,0);
 
 	/* Create renderer (with VSync, nice !) */
 	SDL_SetHint("SDL_HINT_RENDER_SCALE_QUALITY", "linear");

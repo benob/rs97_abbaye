@@ -1,3 +1,5 @@
+PLATFORM:=rs97
+
 PREFIX?=	/usr
 
 CC?=		gcc
@@ -18,11 +20,16 @@ CFLAGS=		-O2 -march=armv7-a -mfpu=neon-vfpv4 -mfloat-abi=hard
 DATADIR= "\"./\""
 endif
 
+ifeq ($(PLATFORM), rs97)
+CFLAGS=		-fprofile-use=pgo -Ofast -march=mips32 -mtune=mips32 -fomit-frame-pointer 
+DATADIR= "\"./\""
+endif
+
 DATADIR?="\"$(PREFIX)/share/abbayev2\""
 LDFLAGS?=	-Wl,-z,relro
 
-CFLAGS+=	`sdl2-config --cflags` -DDATADIR=$(DATADIR)
-LIBS=		`sdl2-config --libs` -lSDL2_image -lSDL2_mixer -lm
+CFLAGS+=	-DUSE_SDL2_COMPAT -I./src `sdl-config --cflags` -DDATADIR=$(DATADIR)
+LIBS=		`sdl-config --libs` -lSDL_image -lSDL_mixer -lm
 
 PROG=		abbayev2
 SRCS=		src/drawing.c \
@@ -34,7 +41,8 @@ SRCS=		src/drawing.c \
 		src/jean.c \
 		src/loading.c \
 		src/main.c \
-		src/startscreen.c
+		src/startscreen.c \
+		src/SDL2_compat.c
 
 all: $(PROG)
 

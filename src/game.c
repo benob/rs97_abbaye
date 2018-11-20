@@ -24,7 +24,11 @@ void game(SDL_Window *screen,uint8_t *state,uint8_t *grapset,uint8_t *fullscreen
 
 	/* Loading PNG */
 	SDL_Surface *tilesb = IMG_Load(DATADIR "/graphics/tiles.png");
+#ifdef USE_SDL2_COMPAT
+	SDL2_SetColorKey(tilesb, SDL_TRUE, SDL_MapRGB(tilesb->format, 0, 0, 0) );
+#else
 	SDL_SetColorKey(tilesb, SDL_TRUE, SDL_MapRGB(tilesb->format, 0, 0, 0) );
+#endif
 	SDL_Texture *tiles = SDL_CreateTextureFromSurface(renderer, tilesb);
 	SDL_FreeSurface(tilesb);
 	SDL_Texture *fonts = IMG_LoadTexture(renderer, DATADIR "/graphics/fonts.png");
@@ -340,7 +344,7 @@ void control (struct hero *jean,uint *keyp) {
 		if (event.type == SDL_QUIT)
 	   	exit(0);
 		if (event.type == SDL_KEYDOWN) {
-			if (event.key.keysym.sym == SDLK_UP) {
+			if (event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_LCTRL) { // A
 				if ((jean->push[0] == 0) && (jean->jump == 0) && (jean->ducking == 0))
 					jean->jump = 1;
 			}
@@ -364,9 +368,13 @@ void control (struct hero *jean,uint *keyp) {
 			}
 			if (event.key.keysym.sym == SDLK_f)
 				*keyp = 6;
-			if (event.key.keysym.sym == SDLK_c)
+			if (event.key.keysym.sym == SDLK_c || event.key.keysym.sym == SDLK_TAB) // L
 				*keyp = 9;
-	   	if (event.key.keysym.sym == SDLK_ESCAPE)
+#ifdef USE_SDL2_COMPAT
+			if (event.key.keysym.sym == SDLK_BACKSPACE) // R
+        SDL_RendererSetScaleMode(renderer, 1 - renderer->scale_mode);
+#endif
+	   	if (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_RETURN) // SELECT or START
       	*keyp = 10;
 		}
 
