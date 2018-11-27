@@ -165,11 +165,35 @@ int SDL_RenderCopyEx(SDL_Renderer * renderer, SDL_Texture * texture, const SDL_R
   return 0;
 }
 
+void fast_scale_up(SDL_Surface* source, SDL_Surface* dest) {
+  if(dest->w < source->w) {
+    fprintf(stderr, "ERROR: fast_scale_up expected dest->w > source->w\n");
+    return;
+  }
+  if(dest->format->BytesPerPixel != 2 || source->format->BytesPerPixel != 2) {
+    fprintf(stderr, "ERROR: fast_scale_up only supports surfaces with 2 bytes per pixel\n");
+    return;
+  }
+  Uint16* spixels = (Uint16*) source->pixels;
+  Uint16* dpixels = (Uint16*) dest->pixels;
+  int x_step = (source->w << 16) / dest->w;
+  int y_step = (source->h << 16) / dest->h;
+  for(int j = 0, y = 0; j < dest->h; j++, y += y_step) {
+    if((y - y_step) >> 16 != y >> 16) {
+      for(int i = 0, x = 0; i < dest->w; i++, x += x_step) {
+        dpixels[j * dest->w + i] = spixels[(y >> 16) * source->w + (x >> 16)];
+      }
+    } else {
+      memcpy(dpixels + j * dest->w, dpixels + (j - 1) * dest->w, dest->w * 2);
+    }
+  }
+}
+
 void SDL_RenderPresent(SDL_Renderer * renderer) {
   SDL_Rect srect = {0, 0, renderer->w, renderer->h};
   if(renderer->scale_mode == 1) {
     SDL_Rect drect = {0, 0, renderer->window->w, renderer->window->h};
-    scaled_blit_alpha(renderer->surface, &srect, renderer->window->screen, &drect, 0, 0);
+    fast_scale_up(renderer->surface, renderer->window->screen);
   } else {
     SDL_Rect drect = {(renderer->window->w - renderer->w) / 2, (renderer->window->h - renderer->h) / 2, renderer->w, renderer->h};
     SDL_FillRect(renderer->window->screen, NULL, SDL_MapRGB(renderer->window->screen->format, 0, 0, 0));

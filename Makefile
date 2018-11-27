@@ -8,6 +8,7 @@ ifeq ($(DEBUG),1)
 CFLAGS?=	-O0 -ggdb
 else
 CFLAGS?=	-O2 -finline-functions -funswitch-loops -fgcse-after-reload -fpredictive-commoning -ftree-vectorize -Wno-unused-result
+DATADIR= "\"./\""
 endif
 
 ifeq ($(PLATFORM), rpi1)
@@ -21,7 +22,7 @@ DATADIR= "\"./\""
 endif
 
 ifeq ($(PLATFORM), rs97)
-CFLAGS=		-fprofile-use=pgo -Ofast -march=mips32 -mtune=mips32 -fomit-frame-pointer 
+CFLAGS=	-fprofile-use=pgo	-Ofast -march=mips32 -mtune=mips32 -fomit-frame-pointer 
 DATADIR= "\"./\""
 endif
 
