@@ -232,7 +232,7 @@ SDL_Window * SDL_CreateWindow(const char *title, int x, int y, int w, int h, Uin
     flags &= ~SDL_WINDOW_OPENGL;
   }
   SDL_Window* window = calloc(sizeof(SDL_Window), 1);
-  window->screen = SDL_SetVideoMode(w, h, DEFAULT_BPP, flags);
+  window->screen = SDL_SetVideoMode(w, h, DEFAULT_BPP, flags | SDL_HWSURFACE);
   window->w = w;
   window->h = h;
   window->flags = flags;
@@ -250,9 +250,9 @@ SDL_bool SDL_SetHint(const char *name, const char *value) {
 
 int SDL_SetWindowFullscreen(SDL_Window * window, Uint32 flags) {
   if(flags & SDL_WINDOW_FULLSCREEN || flags & SDL_WINDOW_FULLSCREEN_DESKTOP) {
-    window->screen = SDL_SetVideoMode(window->w, window->h, DEFAULT_BPP, flags | SDL_FULLSCREEN);
+    window->screen = SDL_SetVideoMode(window->w, window->h, DEFAULT_BPP, flags | SDL_FULLSCREEN | SDL_HWSURFACE);
   } else {
-    window->screen = SDL_SetVideoMode(window->w, window->h, DEFAULT_BPP, flags & (~SDL_FULLSCREEN));
+    window->screen = SDL_SetVideoMode(window->w, window->h, DEFAULT_BPP, flags & (~SDL_FULLSCREEN) | SDL_HWSURFACE);
   }
   return 0;
 }
